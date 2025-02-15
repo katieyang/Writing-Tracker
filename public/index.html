@@ -15,11 +15,11 @@
 
   <body>
     <div class="container">
-      <h1>Word Counter</h1>
+      <h1>Writing Tracker</h1>
     </div>
 
     <div class="container">
-      <p>Update Word Count</p>
+      <!-- <p>Update Word Count</p> -->
       <form id="wcupdate">
         <div class="row align-items-end">
           <div class="col">
@@ -49,7 +49,16 @@
               <option>Plotting</option>
             </select>
           </div>
-
+          <div class="col">
+            <label for="projectName">Project Name</label>
+            <input
+              id="projectName"
+              name="projectName"
+              class="form-control"
+              type="string"
+              required
+            />
+          </div>
           <!-- Need to add some toggle or checkbox for if user wants to overwrite or add -->
 
           <div class="col">

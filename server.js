@@ -37,12 +37,17 @@ app.post("/submit", (req, res) => {
 
   //   Insert the form data into the database
   const insertSql = `
-          INSERT INTO wc (date, wc, category)
-          VALUES (?, ?, ?)
+          INSERT INTO wc (date, wc, category, projectName)
+          VALUES (?, ?, ?, ?)
         `;
   db.run(
     insertSql,
-    [formData.startDate, formData.wordCount, formData.category],
+    [
+      formData.startDate,
+      formData.wordCount,
+      formData.category,
+      formData.projectName,
+    ],
     (err) => {
       if (err) {
         console.error("Error inserting data:", err.message);
@@ -71,6 +76,7 @@ app.post("/test", (req, res) => {
   dates = [];
   wc = [];
   categories = [];
+  projectNames = [];
   sql = `SELECT * FROM wc ORDER BY date`;
   db.all(sql, [], (err, rows) => {
     if (err) return console.error(err.message);
@@ -80,12 +86,14 @@ app.post("/test", (req, res) => {
       dates.push(row.date);
       wc.push(row.wc);
       categories.push(row.category);
+      projectNames.push(row.projectName);
     });
 
     res.json({
       dates: dates,
       wc: wc,
       categories: categories,
+      projectNames: projectNames,
     });
   });
 });

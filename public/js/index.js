@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Set the max date for the start date input to today
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("startDate").setAttribute("max", today);
+
   document
     .getElementById("wcupdate")
     .addEventListener("submit", function (event) {
