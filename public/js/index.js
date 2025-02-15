@@ -68,12 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
       // Log or display the results
       console.log("Form Data:", formObject);
 
-      document.getElementById("submission").innerText = JSON.stringify(
-        formObject,
-        null,
-        2
-      );
-
       // Send the form data to the server
       fetch("/submit", {
         method: "POST",
