@@ -1,0 +1,20 @@
+{
+  "name": "writing-tracker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "chart.js": "^4.4.7",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "path": "^0.12.7",
+    "sqlite3": "^5.1.7"
+  }
+}
+
