@@ -37,8 +37,8 @@ app.post("/submit", (req, res) => {
 
   //   Insert the form data into the database
   const insertSql = `
-          INSERT INTO wc (date, wc, category, projectName)
-          VALUES (?, ?, ?, ?)
+          INSERT INTO wc (date, wc, category, projectName, userid)
+          VALUES (?, ?, ?, ?, ?)
         `;
   db.run(
     insertSql,
@@ -47,6 +47,7 @@ app.post("/submit", (req, res) => {
       formData.wordCount,
       formData.category,
       formData.projectName,
+      formData.userid,
     ],
     (err) => {
       if (err) {
@@ -69,16 +70,19 @@ app.post("/submit", (req, res) => {
   );
 });
 
-app.post("/test", (req, res) => {
+app.post("/initial", (req, res) => {
   console.log("this happened");
+  console.log("Received form data:", req.body);
+  body = req.body;
+  id = body.userid;
 
   //fetch and display contents of sql database, get it in a form that it can be fed back
   dates = [];
   wc = [];
   categories = [];
   projectNames = [];
-  sql = `SELECT * FROM wc ORDER BY date`;
-  db.all(sql, [], (err, rows) => {
+  sql = `SELECT * FROM wc WHERE userid = ? ORDER BY date`;
+  db.all(sql, [id], (err, rows) => {
     if (err) return console.error(err.message);
     rows.forEach((row) => {
       console.log(row);
