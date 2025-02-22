@@ -1,0 +1,10 @@
+.btn-group-toggle {
+  margin-top: 20px;
+}
+.btn-group-toggle input[type="radio"] {
+  display: none;
+}
+.btn-group-toggle .btn {
+  font-size: 12px;
+  text-align: center;
+}

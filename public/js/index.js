@@ -1,3 +1,16 @@
+$(document).ready(function () {
+  $(".btn-group-toggle .btn").click(function () {
+    // Remove 'active' class from all buttons in the group
+    $(".btn-group-toggle .btn").removeClass("active");
+
+    // Add 'active' class to the clicked button
+    $(this).addClass("active");
+
+    // Mark the corresponding radio input as checked
+    $(this).find("input").prop("checked", true);
+  });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   // Function to get all cookies as an object
   function getAllCookies() {
