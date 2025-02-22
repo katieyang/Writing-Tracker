@@ -29,6 +29,22 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
+// Get last Monday's date
+function getLastMonday() {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 (Sunday) to 6 (Saturday)
+  const lastMonday = new Date(today);
+
+  // Calculate the difference to the last Monday
+  const diff = (dayOfWeek + 6) % 7; // Adjust so that Monday is 0
+  lastMonday.setDate(today.getDate() - diff);
+
+  return lastMonday.toISOString().split("T")[0];
+}
+
+lastMonday = getLastMonday();
+console.log("Last Monday:", getLastMonday());
+
 // Endpoint to handle form submissions
 app.post("/submit", (req, res) => {
   const formData = req.body;
@@ -73,16 +89,41 @@ app.post("/submit", (req, res) => {
 app.post("/initial", (req, res) => {
   console.log("this happened");
   console.log("Received form data:", req.body);
-  body = req.body;
-  id = body.userid;
+  id = req.body.userid;
+  time = req.body.time;
+  startDate = null;
+
+  if (time === "lastmonday") {
+    startDate = lastMonday;
+  } else if (time === "lastwk") {
+    // Get the date 7 days ago
+    const today = new Date();
+    const lastWeek = new Date(today);
+    lastWeek.setDate(today.getDate() - 7);
+    startDate = lastWeek.toISOString().split("T")[0];
+  } else if (time === "lastmonth") {
+    // Get the date of the first day of the month
+    const today = new Date();
+    startDate = new Date(today.getFullYear(), today.getMonth(), 1)
+      .toISOString()
+      .split("T")[0];
+  } else if (time === "lastyear") {
+    // Get the date of the first day of the year
+    const today = new Date();
+    startDate = new Date(today.getFullYear(), 0, 1).toISOString().split("T")[0];
+  } else if (time === "alltime") {
+    startDate = "2000-01-01";
+  }
+
+  console.log("Start Date:", startDate);
 
   //fetch and display contents of sql database, get it in a form that it can be fed back
   dates = [];
   wc = [];
   categories = [];
   projectNames = [];
-  sql = `SELECT * FROM wc WHERE userid = ? ORDER BY date`;
-  db.all(sql, [id], (err, rows) => {
+  sql = `SELECT * FROM wc WHERE userid = ? AND date >= ? ORDER BY date`;
+  db.all(sql, [id, startDate], (err, rows) => {
     if (err) return console.error(err.message);
     rows.forEach((row) => {
       console.log(row);

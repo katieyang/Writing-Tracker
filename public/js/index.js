@@ -1,3 +1,53 @@
+let myChart = null; // Store the chart instance globally
+
+// Function to update the chart based on the selected time
+function updateChart(selectedTime) {
+  fetch("/initial", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userid: userId, time: selectedTime }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // For creating the graph
+      const xValues = data.dates;
+      const yValues = data.wc;
+      const maxY = Math.round(Math.max(...yValues) / 100) * 100 + 100;
+
+      // Destroy existing chart instance before creating a new one
+      if (myChart) {
+        myChart.destroy();
+      }
+
+      myChart = new Chart("myChart", {
+        type: "bar",
+        data: {
+          labels: xValues,
+          datasets: [
+            {
+              fill: false,
+              lineTension: 0,
+              backgroundColor: "rgba(0,0,255,1.0)",
+              borderColor: "rgba(0,0,255,0.1)",
+              data: yValues,
+            },
+          ],
+        },
+        options: {
+          legend: { display: false },
+          scales: {
+            yAxes: [{ ticks: { min: 0, max: maxY } }], // Rounded maxY
+          },
+        },
+      });
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
 $(document).ready(function () {
   $(".btn-group-toggle .btn").click(function () {
     // Remove 'active' class from all buttons in the group
@@ -8,7 +58,14 @@ $(document).ready(function () {
 
     // Mark the corresponding radio input as checked
     $(this).find("input").prop("checked", true);
+
+    //send data to server and modify the chart
+    const selectedTime = $(this).find("input").attr("id");
+    updateChart(selectedTime);
+    console.log("This HAPPENED");
   });
+  // Initial chart load
+  updateChart("lastmonday");
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -69,8 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
     .addEventListener("submit", function (event) {
       event.preventDefault(); // Prevent the default form submission
 
-      console.log("This is working");
-
       // Collect form data
       const formData = new FormData(event.target);
 
@@ -97,47 +152,5 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch((error) => {
           console.error("Error:", error);
         });
-    });
-
-  // fetching the data to initialize the chart
-  // needs to have ability to handle if it's empty when initialized!
-  fetch("/initial", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userid: userId }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      //for creating the graph
-      const xValues = data.dates;
-      const yValues = data.wc;
-      maxY = Math.round(Math.max(...yValues) / 100) * 100 + 100;
-
-      new Chart("myChart", {
-        type: "bar",
-        data: {
-          labels: xValues,
-          datasets: [
-            {
-              fill: false,
-              lineTension: 0,
-              backgroundColor: "rgba(0,0,255,1.0)",
-              borderColor: "rgba(0,0,255,0.1)",
-              data: yValues,
-            },
-          ],
-        },
-        options: {
-          legend: { display: false },
-          scales: {
-            yAxes: [{ ticks: { min: 0, max: maxY } }], //want to figure out a way to make this flexible
-          },
-        },
-      });
-    })
-    .catch((error) => {
-      console.error("Error:", error);
     });
 });
