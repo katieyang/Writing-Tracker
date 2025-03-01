@@ -62,7 +62,6 @@ $(document).ready(function () {
     //send data to server and modify the chart
     const selectedTime = $(this).find("input").attr("id");
     updateChart(selectedTime);
-    console.log("This HAPPENED");
   });
   // Initial chart load
   updateChart("lastmonday");

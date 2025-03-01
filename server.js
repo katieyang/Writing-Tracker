@@ -101,12 +101,12 @@ app.post("/initial", (req, res) => {
     const lastWeek = new Date(today);
     lastWeek.setDate(today.getDate() - 7);
     startDate = lastWeek.toISOString().split("T")[0];
-  } else if (time === "lastmonth") {
-    // Get the date of the first day of the month
+  } else if (time === "last30days") {
+    // Get the date 30 days ago
     const today = new Date();
-    startDate = new Date(today.getFullYear(), today.getMonth(), 1)
-      .toISOString()
-      .split("T")[0];
+    const last30Days = new Date(today);
+    last30Days.setDate(today.getDate() - 30);
+    startDate = last30Days.toISOString().split("T")[0];
   } else if (time === "lastyear") {
     // Get the date of the first day of the year
     const today = new Date();

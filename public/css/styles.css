@@ -67,6 +67,7 @@ label {
 #title {
   background: linear-gradient(120deg, #3498db, #2980b9);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 3rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
