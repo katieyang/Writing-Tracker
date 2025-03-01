@@ -118,27 +118,25 @@ app.post("/initial", (req, res) => {
   console.log("Start Date:", startDate);
 
   //fetch and display contents of sql database, get it in a form that it can be fed back
-  dates = [];
-  wc = [];
-  categories = [];
-  projectNames = [];
+  let dataByDate = {};
   sql = `SELECT * FROM wc WHERE userid = ? AND date >= ? ORDER BY date`;
   db.all(sql, [id, startDate], (err, rows) => {
     if (err) return console.error(err.message);
     rows.forEach((row) => {
       console.log(row);
       console.log(row.date);
-      dates.push(row.date);
-      wc.push(row.wc);
-      categories.push(row.category);
-      projectNames.push(row.projectName);
+      if (!dataByDate[row.date]) {
+        dataByDate[row.date] = [];
+      }
+      dataByDate[row.date].push({
+        wc: row.wc,
+        category: row.category,
+        projectName: row.projectName,
+      });
     });
 
     res.json({
-      dates: dates,
-      wc: wc,
-      categories: categories,
-      projectNames: projectNames,
+      data: dataByDate,
     });
   });
 });

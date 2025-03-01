@@ -12,9 +12,13 @@ function updateChart(selectedTime) {
     .then((response) => response.json())
     .then((data) => {
       // For creating the graph
-      const xValues = data.dates;
-      const yValues = data.wc;
-      const maxY = Math.round(Math.max(...yValues) / 100) * 100 + 100;
+      console.log(data.data);
+      const dates = Object.keys(data.data); // an array of dates
+      const wordCountArray = dates.map((date) => {
+        return data.data[date].reduce((sum, entry) => sum + entry.wc, 0);
+      }); // an array of word counts
+
+      const maxY = Math.round(Math.max(...wordCountArray) / 100) * 100 + 100;
 
       // Destroy existing chart instance before creating a new one
       if (myChart) {
@@ -24,14 +28,14 @@ function updateChart(selectedTime) {
       myChart = new Chart("myChart", {
         type: "bar",
         data: {
-          labels: xValues,
+          labels: dates,
           datasets: [
             {
               fill: false,
               lineTension: 0,
               backgroundColor: "rgba(0,0,255,1.0)",
               borderColor: "rgba(0,0,255,0.1)",
-              data: yValues,
+              data: wordCountArray,
             },
           ],
         },
