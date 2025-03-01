@@ -108,9 +108,11 @@ app.post("/initial", (req, res) => {
     last30Days.setDate(today.getDate() - 30);
     startDate = last30Days.toISOString().split("T")[0];
   } else if (time === "lastyear") {
-    // Get the date of the first day of the year
+    // Get the date from 12 months ago
     const today = new Date();
-    startDate = new Date(today.getFullYear(), 0, 1).toISOString().split("T")[0];
+    const lastYear = new Date(today);
+    lastYear.setMonth(today.getMonth() - 12);
+    startDate = lastYear.toISOString().split("T")[0];
   } else if (time === "alltime") {
     startDate = "2000-01-01";
   }
@@ -134,6 +136,13 @@ app.post("/initial", (req, res) => {
         projectName: row.projectName,
       });
     });
+
+    // Only update startDate to first data date if viewing all time
+    if (time === "alltime") {
+      const dates = Object.keys(dataByDate).sort();
+      const firstDataDate = dates.length > 0 ? dates[0] : startDate;
+      startDate = firstDataDate > startDate ? firstDataDate : startDate;
+    }
 
     res.json({
       data: dataByDate,

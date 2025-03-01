@@ -15,10 +15,12 @@ function updateChart(selectedTime) {
       console.log(data.data);
       const dates = Object.keys(data.data); // an array of dates
       const wordCountArray = dates.map((date) => {
-        return data.data[date].reduce((sum, entry) => sum + entry.wc, 0);
+        const totalwc = data.data[date].reduce(
+          (sum, entry) => sum + entry.wc,
+          0
+        );
+        return totalwc;
       }); // an array of word counts
-
-      const maxY = Math.round(Math.max(...wordCountArray) / 100) * 100 + 100;
 
       // Create array of dates from startDate to today
       const updatedDates = [];
@@ -40,6 +42,51 @@ function updateChart(selectedTime) {
           return 0;
         }
       });
+
+      let monthlyData = {}; // Declare outside to fix scope
+
+      // Special handling for Last Year view
+      if (selectedTime === "lastyear") {
+        // Group data by month
+        monthlyData = {}; // Initialize the object
+        updatedDates.forEach((date, index) => {
+          const monthKey = date.substring(0, 7); // Get YYYY-MM format
+          if (!monthlyData[monthKey]) {
+            monthlyData[monthKey] = 0;
+          }
+          monthlyData[monthKey] += updatedWordCountArray[index];
+        });
+
+        // Convert back to arrays for the chart
+        const monthLabels = Object.keys(monthlyData);
+        const monthWordCounts = Object.values(monthlyData);
+
+        // Update the arrays used by the chart
+        updatedDates.length = 0;
+        updatedDates.push(...monthLabels);
+
+        updatedWordCountArray.length = 0;
+        updatedWordCountArray.push(...monthWordCounts);
+      }
+
+      const maxValue =
+        selectedTime === "lastyear"
+          ? Math.max(...Object.values(monthlyData))
+          : Math.max(...updatedWordCountArray);
+
+      // Find appropriate rounding increment based on max value
+      let roundingIncrement;
+      if (maxValue <= 100) {
+        roundingIncrement = 25;
+      } else if (maxValue <= 500) {
+        roundingIncrement = 100;
+      } else if (maxValue <= 2000) {
+        roundingIncrement = 500;
+      } else {
+        roundingIncrement = 1000;
+      }
+
+      const maxY = Math.ceil(maxValue / roundingIncrement) * roundingIncrement;
 
       // Destroy existing chart instance before creating a new one
       if (myChart) {
