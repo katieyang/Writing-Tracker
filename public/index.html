@@ -76,44 +76,73 @@
           </div>
         </div>
       </form>
-
-      <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
-        <label class="btn btn-secondary active">
-          <input
-            type="radio"
-            name="time"
-            id="lastmonday"
-            autocomplete="off"
-            checked
-          />
-          Since Last Monday
-        </label>
-
-        <label class="btn btn-secondary">
-          <input type="radio" name="time" id="lastwk" autocomplete="off" />
-          Last Week
-        </label>
-
-        <label class="btn btn-secondary">
-          <input type="radio" name="time" id="last30days" autocomplete="off" />
-          Last 30 Days
-        </label>
-
-        <label class="btn btn-secondary">
-          <input type="radio" name="time" id="lastyear" autocomplete="off" />
-          Last Year
-        </label>
-
-        <label class="btn btn-secondary">
-          <input type="radio" name="time" id="alltime" autocomplete="off" />
-          All Time
-        </label>
+      <div class="container mt-4">
+        <div class="row">
+          <div class="col-12 mb-4">
+            <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
+              <label class="btn btn-secondary active">
+                <input
+                  type="radio"
+                  name="time"
+                  id="lastmonday"
+                  autocomplete="off"
+                  checked
+                />
+                Since Last Monday
+              </label>
+              <label class="btn btn-secondary">
+                <input
+                  type="radio"
+                  name="time"
+                  id="lastwk"
+                  autocomplete="off"
+                />
+                Last Week
+              </label>
+              <label class="btn btn-secondary">
+                <input
+                  type="radio"
+                  name="time"
+                  id="last30days"
+                  autocomplete="off"
+                />
+                Last 30 Days
+              </label>
+              <label class="btn btn-secondary">
+                <input
+                  type="radio"
+                  name="time"
+                  id="lastyear"
+                  autocomplete="off"
+                />
+                Last Year
+              </label>
+              <label class="btn btn-secondary">
+                <input
+                  type="radio"
+                  name="time"
+                  id="alltime"
+                  autocomplete="off"
+                />
+                All Time
+              </label>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <canvas id="myChart" style="width: 100%; max-width: 600px"></canvas>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Cumulative Word Count</h5>
+                <p class="card-text">
+                  <span id="cumulativeCount" class="h2">0</span> words
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <canvas
-        id="myChart"
-        style="width: 100%; max-width: 600px; margin-top: 20px"
-      ></canvas>
     </div>
   </body>
 </html>

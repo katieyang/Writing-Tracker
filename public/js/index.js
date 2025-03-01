@@ -88,6 +88,13 @@ function updateChart(selectedTime) {
 
       const maxY = Math.ceil(maxValue / roundingIncrement) * roundingIncrement;
 
+      // Update cumulative word count
+      const cumulativeCount = updatedWordCountArray.reduce(
+        (sum, count) => sum + count,
+        0
+      );
+      document.getElementById("cumulativeCount").textContent = cumulativeCount;
+
       // Destroy existing chart instance before creating a new one
       if (myChart) {
         myChart.destroy();
