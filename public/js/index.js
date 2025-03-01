@@ -20,6 +20,27 @@ function updateChart(selectedTime) {
 
       const maxY = Math.round(Math.max(...wordCountArray) / 100) * 100 + 100;
 
+      // Create array of dates from startDate to today
+      const updatedDates = [];
+      let startDate = new Date(data.startDate);
+      const today = new Date();
+
+      while (startDate <= today) {
+        updatedDates.push(startDate.toISOString().split("T")[0]);
+        startDate.setDate(startDate.getDate() + 1);
+      }
+
+      // Create array of word counts matching updatedDates
+      const updatedWordCountArray = updatedDates.map((date) => {
+        if (dates.includes(date)) {
+          // If date exists in original data, use the word count
+          return data.data[date].reduce((sum, entry) => sum + entry.wc, 0);
+        } else {
+          // For dates not in original data, use 0
+          return 0;
+        }
+      });
+
       // Destroy existing chart instance before creating a new one
       if (myChart) {
         myChart.destroy();
@@ -28,14 +49,14 @@ function updateChart(selectedTime) {
       myChart = new Chart("myChart", {
         type: "bar",
         data: {
-          labels: dates,
+          labels: updatedDates,
           datasets: [
             {
               fill: false,
               lineTension: 0,
               backgroundColor: "rgba(0,0,255,1.0)",
               borderColor: "rgba(0,0,255,0.1)",
-              data: wordCountArray,
+              data: updatedWordCountArray,
             },
           ],
         },

@@ -99,7 +99,7 @@ app.post("/initial", (req, res) => {
     // Get the date 7 days ago
     const today = new Date();
     const lastWeek = new Date(today);
-    lastWeek.setDate(today.getDate() - 7);
+    lastWeek.setDate(today.getDate() - 6);
     startDate = lastWeek.toISOString().split("T")[0];
   } else if (time === "last30days") {
     // Get the date 30 days ago
@@ -137,6 +137,7 @@ app.post("/initial", (req, res) => {
 
     res.json({
       data: dataByDate,
+      startDate: startDate,
     });
   });
 });
