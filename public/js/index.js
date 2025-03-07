@@ -86,7 +86,9 @@ function updateChart(selectedTime) {
         roundingIncrement = 1000;
       }
 
-      const maxY = Math.ceil(maxValue / roundingIncrement) * roundingIncrement;
+      const maxY = maxValue
+        ? Math.ceil(maxValue / roundingIncrement) * roundingIncrement
+        : 100;
 
       // Update cumulative word count
       const cumulativeCount = updatedWordCountArray.reduce(
