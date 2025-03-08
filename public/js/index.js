@@ -129,6 +129,51 @@ function updateChart(selectedTime) {
     });
 }
 
+function updateStreakCount(data) {
+  let streak = 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Convert data object dates to Date objects and sort descending
+  const dates = Object.keys(data)
+    .map((dateStr) => new Date(dateStr))
+    .sort((a, b) => b - a);
+
+  if (dates.length === 0) {
+    document.getElementById("streakCount").textContent = streak;
+    return;
+  }
+
+  // Start counting streak from most recent entry
+  let currentDate = dates[0];
+  streak = 1;
+
+  // If most recent entry is not today, check if it was yesterday
+  if (currentDate.getTime() !== today.getTime()) {
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (currentDate.getTime() < yesterday.getTime()) {
+      document.getElementById("streakCount").textContent = 0;
+      return;
+    }
+  }
+
+  // Count consecutive days
+  for (let i = 1; i < dates.length; i++) {
+    const expectedPrevDate = new Date(currentDate);
+    expectedPrevDate.setDate(expectedPrevDate.getDate() - 1);
+
+    if (dates[i].getTime() === expectedPrevDate.getTime()) {
+      streak++;
+      currentDate = dates[i];
+    } else {
+      break;
+    }
+  }
+
+  document.getElementById("streakCount").textContent = streak;
+}
+
 $(document).ready(function () {
   $(".btn-group-toggle .btn").click(function () {
     // Remove 'active' class from all buttons in the group
@@ -146,4 +191,20 @@ $(document).ready(function () {
   });
   // Initial chart load
   updateChart("lastmonday");
+
+  // Add updateStreakCount to the fetch callback
+  fetch("/getrecords", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userid: userId }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      updateStreakCount(data);
+    })
+    .catch((error) => {
+      console.error("Error fetching records for streak:", error);
+    });
 });

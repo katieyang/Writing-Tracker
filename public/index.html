@@ -124,7 +124,7 @@
       </form>
       <div class="container mt-4">
         <div class="row">
-          <div class="col-12 mb-4">
+          <div class="col-12 col-md-8 mb-4">
             <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
               <label class="btn btn-secondary active">
                 <input
@@ -173,16 +173,22 @@
                 All Time
               </label>
             </div>
+            <canvas id="myChart" class="w-100" style="height: 300px"></canvas>
           </div>
-          <div class="col-md-8">
-            <canvas id="myChart" style="width: 100%; max-width: 600px"></canvas>
-          </div>
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-body">
+          <div class="col-12 col-md-4 mb-4">
+            <div class="card w-100 h-100">
+              <div class="card-body text-center">
                 <h5 class="card-title">Cumulative Word Count</h5>
                 <p class="card-text">
-                  <span id="cumulativeCount" class="h2">0</span> words
+                  <span id="cumulativeCount" class="display-4">0</span>
+                  <br />
+                  <span class="text-muted">words</span>
+                  <hr class="my-3">
+                  <div class="streak-container">
+                    <span id="streakCount" class="display-4">0</span>
+                    <span class="fire-emoji" style="font-size: 1.5em; margin-left: 2px;">🔥</span>
+                  </div>
+                  <span class="text-muted">day streak</span>
                 </p>
               </div>
             </div>
