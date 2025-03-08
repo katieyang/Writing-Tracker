@@ -118,11 +118,15 @@ function updateChart(selectedTime) {
         },
         options: {
           legend: { display: false },
+          maintainAspectRatio: false,
           scales: {
             yAxes: [{ ticks: { min: 0, max: maxY } }], // Rounded maxY
           },
         },
       });
+
+      // Set chart container height
+      document.getElementById("myChart").style.height = "300px";
     })
     .catch((error) => {
       console.error("Error:", error);
