@@ -182,6 +182,19 @@ app.post("/getrecords", (req, res) => {
   });
 });
 
+app.post("/delete", (req, res) => {
+  const id = req.body.id;
+  const sql = `DELETE FROM wc WHERE id = ?`;
+
+  db.run(sql, [id], function (err) {
+    if (err || this.changes === 0) {
+      res.json({ error: "there was an error" });
+      return;
+    }
+    res.json({ message: "success" });
+  });
+});
+
 // let sql;
 // will get rid of this once we get out of test mode
 // sql = `DROP TABLE IF EXISTS wc`;
