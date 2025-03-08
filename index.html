@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Writing Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Writing Tracker</h1>
+      <table id="writingTable" class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Title</th>
+            <th>Words</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table rows will be dynamically added here -->
+        </tbody>
+      </table>
+      <a href="add_entry.html" class="btn">Add New Entry</a>
+    </div>
+    <script>
+      $(document).ready(function () {
+        $("#writingTable").DataTable({
+          order: [[0, "desc"]], // Sort by first column (date) in descending order
+          pageLength: 10,
+          language: {
+            search: "Search entries:",
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

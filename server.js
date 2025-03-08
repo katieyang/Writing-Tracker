@@ -151,6 +151,37 @@ app.post("/initial", (req, res) => {
   });
 });
 
+app.post("/getrecords", (req, res) => {
+  const id = req.body.userid;
+
+  // Query database for all records matching userid
+  const sql = `SELECT * FROM wc WHERE userid = ? ORDER BY date`;
+
+  db.all(sql, [id], (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: "Database error" });
+      return;
+    }
+
+    // Group records by date
+    let dataByDate = {};
+    rows.forEach((row) => {
+      if (!dataByDate[row.date]) {
+        dataByDate[row.date] = [];
+      }
+      dataByDate[row.date].push({
+        id: row.id,
+        wc: row.wc,
+        category: row.category,
+        projectName: row.projectName,
+      });
+    });
+
+    res.json(dataByDate);
+  });
+});
+
 // let sql;
 // will get rid of this once we get out of test mode
 // sql = `DROP TABLE IF EXISTS wc`;
