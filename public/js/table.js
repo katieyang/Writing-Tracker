@@ -33,7 +33,7 @@ $(document).ready(function () {
           { title: "Category", className: "text-center" },
           { title: "Word Count", className: "text-center" },
           {
-            title: "Actions",
+            title: "Delete?",
             className: "text-center",
             render: function (data, type, row) {
               return `<button class="btn btn-danger btn-sm delete-btn" data-id="${row[0]}">Delete</button>`;
