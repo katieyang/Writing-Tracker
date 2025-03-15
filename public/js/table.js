@@ -44,7 +44,18 @@ $(document).ready(function () {
         pageLength: 5, // Default to 5 entries per page
         lengthMenu: [5, 10, 25],
         stripeClasses: ["odd", "even"], // Add striping classes
-        stripe: true, // Enable row striping
+        stripe: true,
+        dom: "Bfrtip",
+        buttons: [
+          {
+            extend: "csvHtml5",
+            text: "Export to CSV",
+            className: "btn btn-primary",
+            exportOptions: {
+              columns: [1, 2, 3, 4], // Only export columns with index 1 (Date), 2 (Project Name), and 3 (Category)
+            },
+          },
+        ],
       });
 
       // Add click handler for delete buttons
