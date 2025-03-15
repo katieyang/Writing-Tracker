@@ -46,7 +46,7 @@ function updateChart(selectedTime) {
       let monthlyData = {}; // Declare outside to fix scope
 
       // Special handling for Last Year view
-      if (selectedTime === "lastyear") {
+      if (selectedTime === "lastyear" || selectedTime === "alltime") {
         // Group data by month
         monthlyData = {}; // Initialize the object
         updatedDates.forEach((date, index) => {
