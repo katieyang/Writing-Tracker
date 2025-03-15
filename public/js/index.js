@@ -25,10 +25,18 @@ function updateChart(selectedTime) {
       // Create array of dates from startDate to today
       const updatedDates = [];
       let startDate = new Date(data.startDate);
+      startDate.setHours(0, 0, 0, 0); // Aligns to local midnight
       const today = new Date();
+      today.setHours(0, 0, 0, 0); // Aligns today to local midnight
 
       while (startDate <= today) {
-        updatedDates.push(startDate.toISOString().split("T")[0]);
+        updatedDates.push(
+          startDate.getFullYear() +
+            "-" +
+            String(startDate.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(startDate.getDate()).padStart(2, "0")
+        );
         startDate.setDate(startDate.getDate() + 1);
       }
 
@@ -140,7 +148,10 @@ function updateStreakCount(data) {
 
   // Convert data object dates to Date objects and sort descending
   const dates = Object.keys(data)
-    .map((dateStr) => new Date(dateStr))
+    .map((dateStr) => {
+      const [year, month, day] = dateStr.split("-").map(Number);
+      return new Date(year, month - 1, day); // Ensures local time interpretation
+    })
     .sort((a, b) => b - a);
 
   if (dates.length === 0) {

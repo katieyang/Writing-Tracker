@@ -48,8 +48,10 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log(getAllCookies());
 
   // Set the max date for the start date input to today
-  const today = new Date().toISOString().split("T")[0];
-  document.getElementById("startDate").setAttribute("max", today);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize to local midnight
+  const todayString = today.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+  document.getElementById("startDate").setAttribute("max", todayString);
 
   document
     .getElementById("wcupdate")
