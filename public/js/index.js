@@ -179,9 +179,9 @@ function updateStreakCount(data) {
 }
 
 $(document).ready(function () {
-  $(".btn-group-toggle .btn").click(function () {
+  $(".btn-group-toggle.time .btn ").click(function () {
     // Remove 'active' class from all buttons in the group
-    $(".btn-group-toggle .btn").removeClass("active");
+    $(".btn-group-toggle.time .btn").removeClass("active");
 
     // Add 'active' class to the clicked button
     $(this).addClass("active");
@@ -193,6 +193,23 @@ $(document).ready(function () {
     const selectedTime = $(this).find("input").attr("id");
     updateChart(selectedTime);
   });
+
+  // when you click an aggregation
+  $(".btn-group-toggle.aggregation .btn ").click(function () {
+    // Remove 'active' class from all buttons in the group
+    $(".btn-group-toggle.aggregation .btn").removeClass("active");
+
+    // Add 'active' class to the clicked button
+    $(this).addClass("active");
+
+    // Mark the corresponding radio input as checked
+    $(this).find("input").prop("checked", true);
+
+    //send data to server and modify the chart
+    // const selectedTime = $(this).find("input").attr("id");
+    // updateChart(selectedTime);
+  });
+
   // Initial chart load
   updateChart("lastmonday");
 

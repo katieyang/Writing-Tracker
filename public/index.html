@@ -122,10 +122,11 @@
           </div>
         </div>
       </form>
+
       <div class="container mt-4">
         <div class="row">
           <div class="col-12 col-md-8 mb-4">
-            <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
+            <div class="btn-group btn-group-toggle time" data-bs-toggle="buttons">
               <label class="btn btn-secondary active">
                 <input
                   type="radio"
@@ -173,6 +174,39 @@
                 All Time
               </label>
             </div>
+
+            <div class="btn-group btn-group-toggle aggregation" data-bs-toggle="buttons">
+              <label class="btn btn-primary active">
+                <input
+                  type="radio"
+                  name="aggregation"
+                  id="total"
+                  autocomplete="off"
+                  checked
+                />
+                Total
+              </label>
+              <label class="btn btn-primary">
+                <input
+                  type="radio"
+                  name="aggregation"
+                  id="bycategory"
+                  autocomplete="off"
+                />
+                By Category
+              </label>
+              <label class="btn btn-primary">
+                <input
+                  type="radio"
+                  name="aggregation"
+                  id="byproject"
+                  autocomplete="off"
+                />
+                By Project
+              </label>
+            </div>
+
+            
             <canvas id="myChart" class="w-100" style="height: 300px"></canvas>
           </div>
           <div class="col-12 col-md-4 mb-4">
