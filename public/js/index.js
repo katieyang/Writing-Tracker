@@ -1,7 +1,10 @@
 let myChart = null; // Store the chart instance globally
 
 // Function to update the chart based on the selected time
-function updateChart(selectedTime) {
+function updateChart(
+  selectedTime = "lastmonday",
+  selectedAggregation = "category"
+) {
   fetch("/initial", {
     method: "POST",
     headers: {
@@ -51,9 +54,57 @@ function updateChart(selectedTime) {
         }
       });
 
+      // Create a dictionary of categories with arrays of word counts matching updatedDates
+      const categoryArray = {};
+      //fetch all the unique categories
+      const categories = new Set();
+      dates.forEach((date) => {
+        data.data[date].forEach((entry) => {
+          categories.add(entry.category);
+        });
+      });
+
+      for (const category of categories) {
+        categoryArray[category] = updatedDates.map((date) => {
+          if (dates.includes(date)) {
+            // If date exists in original data, use the word count
+            return data.data[date]
+              .filter((entry) => entry.category === category)
+              .reduce((sum, entry) => sum + entry.wc, 0);
+          } else {
+            // For dates not in original data, use 0
+            return 0;
+          }
+        });
+      }
+
+      // Create a dictionary of projects with arrays of word counts matching updatedDates
+      const projectArray = {};
+      //fetch all the unique projects
+      const projects = new Set();
+      dates.forEach((date) => {
+        data.data[date].forEach((entry) => {
+          projects.add(entry.projectName);
+        });
+      });
+
+      for (const project of projects) {
+        projectArray[project] = updatedDates.map((date) => {
+          if (dates.includes(date)) {
+            // If date exists in original data, use the word count
+            return data.data[date]
+              .filter((entry) => entry.projectName === project)
+              .reduce((sum, entry) => sum + entry.wc, 0);
+          } else {
+            // For dates not in original data, use 0
+            return 0;
+          }
+        });
+      }
+
       let monthlyData = {}; // Declare outside to fix scope
 
-      // Special handling for Last Year view
+      // Special handling for Last Year and All Time views to aggregate monthly instead of daily
       if (selectedTime === "lastyear" || selectedTime === "alltime") {
         // Group data by month
         monthlyData = {}; // Initialize the object
@@ -69,12 +120,68 @@ function updateChart(selectedTime) {
         const monthLabels = Object.keys(monthlyData);
         const monthWordCounts = Object.values(monthlyData);
 
+        //update categoryArray with monthly data
+        monthlyCategoryData = {};
+        for (const category of categories) {
+          if (!monthlyCategoryData[category]) {
+            monthlyCategoryData[category] = {}; // Initialize it as an object
+          }
+
+          updatedDates.forEach((date, index) => {
+            const monthKey = date.substring(0, 7); // Get YYYY-MM format
+            if (!monthlyCategoryData[category][monthKey]) {
+              monthlyCategoryData[category][monthKey] = 0;
+            }
+            monthlyCategoryData[category][monthKey] +=
+              categoryArray[category][index];
+          });
+        }
+
+        //update projectArray with monthly data
+        monthlyProjectData = {};
+        for (const project of projects) {
+          if (!monthlyProjectData[project]) {
+            monthlyProjectData[project] = {}; // Initialize it as an object
+          }
+
+          updatedDates.forEach((date, index) => {
+            const monthKey = date.substring(0, 7); // Get YYYY-MM format
+            if (!monthlyProjectData[project][monthKey]) {
+              monthlyProjectData[project][monthKey] = 0;
+            }
+            monthlyProjectData[project][monthKey] +=
+              projectArray[project][index];
+          });
+        }
+
         // Update the arrays used by the chart
         updatedDates.length = 0;
         updatedDates.push(...monthLabels);
 
         updatedWordCountArray.length = 0;
         updatedWordCountArray.push(...monthWordCounts);
+
+        // Update categoryArray with monthly data
+        for (const category of categories) {
+          // Ensure categoryArray[category] is reset to an empty list
+          categoryArray[category] = [];
+
+          // Push the monthly data (values) for the current category
+          categoryArray[category].push(
+            ...Object.values(monthlyCategoryData[category])
+          );
+        }
+
+        // Update projectArray with monthly data
+        for (const project of projects) {
+          // Ensure projectArray[project] is reset to an empty list
+          projectArray[project] = [];
+
+          // Push the monthly data (values) for the current project
+          projectArray[project].push(
+            ...Object.values(monthlyProjectData[project])
+          );
+        }
       }
 
       const maxValue =
@@ -110,28 +217,114 @@ function updateChart(selectedTime) {
         myChart.destroy();
       }
 
-      myChart = new Chart("myChart", {
-        type: "bar",
-        data: {
-          labels: updatedDates,
-          datasets: [
-            {
-              fill: false,
-              lineTension: 0,
-              backgroundColor: "rgba(0,0,255,1.0)",
-              borderColor: "rgba(0,0,255,0.1)",
-              data: updatedWordCountArray,
-            },
-          ],
-        },
-        options: {
-          legend: { display: false },
-          maintainAspectRatio: false,
-          scales: {
-            yAxes: [{ ticks: { min: 0, max: maxY } }], // Rounded maxY
+      if (selectedAggregation == "total") {
+        myChart = new Chart("myChart", {
+          type: "bar",
+          data: {
+            labels: updatedDates,
+            datasets: [
+              {
+                fill: false,
+                lineTension: 0,
+                backgroundColor: "rgba(47, 55, 64, 1)",
+                borderColor: "rgba(0,0,255,0.1)",
+                data: updatedWordCountArray,
+              },
+            ],
           },
-        },
-      });
+          options: {
+            legend: { display: false },
+            maintainAspectRatio: false,
+            scales: {
+              yAxes: [{ ticks: { min: 0, max: maxY } }], // Rounded maxY
+            },
+          },
+        });
+      } else if (selectedAggregation == "bycategory") {
+        const colors = [
+          "rgba(47, 55, 64, 1)", // Dark Slate Blue
+          "rgba(112, 128, 144, 1)", // Slate Gray
+          "rgba(102, 163, 141, 1)", // Soft Green
+          "rgba(169, 169, 169, 1)", // Cool Gray
+          "rgba(188, 143, 143, 1)", // Dusty Rose
+        ];
+
+        // Convert categoryArray into datasets dynamically
+        const datasets = Object.keys(categoryArray).map((category, index) => ({
+          label: category,
+          backgroundColor: colors[index % colors.length], // Assign colors cyclically
+          data: categoryArray[category], // The data array for each category
+        }));
+
+        myChart = new Chart("myChart", {
+          type: "bar",
+          data: {
+            labels: updatedDates, // X-axis labels (dates)
+            datasets: datasets, // Dynamically generated datasets based on categoryArray
+          },
+          options: {
+            maintainAspectRatio: false,
+            legend: { display: true }, // Display legend
+            scales: {
+              xAxes: [
+                {
+                  stacked: true, // Stack bars on the x-axis
+                },
+              ],
+              yAxes: [
+                {
+                  stacked: true, // Stack bars on the y-axis
+                  ticks: {
+                    beginAtZero: true, // Start y-axis from zero
+                  },
+                },
+              ],
+            },
+          },
+        });
+      } else if (selectedAggregation == "byproject") {
+        const colors = [
+          "rgba(47, 55, 64, 1)", // Dark Slate Blue
+          "rgba(112, 128, 144, 1)", // Slate Gray
+          "rgba(102, 163, 141, 1)", // Soft Green
+          "rgba(169, 169, 169, 1)", // Cool Gray
+          "rgba(188, 143, 143, 1)", // Dusty Rose
+        ];
+
+        // Convert projectArray into datasets dynamically
+        const datasets = Object.keys(projectArray).map((project, index) => ({
+          label: project,
+          backgroundColor: colors[index % colors.length], // Assign colors cyclically
+          data: projectArray[project], // The data array for each project
+        }));
+
+        myChart = new Chart("myChart", {
+          type: "bar",
+          data: {
+            labels: updatedDates, // X-axis labels (dates)
+            datasets: datasets, // Dynamically generated datasets based on projectArray
+          },
+          options: {
+            maintainAspectRatio: false,
+            legend: { display: true }, // Display legend
+            scales: {
+              xAxes: [
+                {
+                  stacked: true, // Stack bars on the x-axis
+                },
+              ],
+              yAxes: [
+                {
+                  stacked: true, // Stack bars on the y-axis
+                  ticks: {
+                    beginAtZero: true, // Start y-axis from zero
+                  },
+                },
+              ],
+            },
+          },
+        });
+      }
 
       // Set chart container height
       document.getElementById("myChart").style.height = "300px";
@@ -190,7 +383,11 @@ function updateStreakCount(data) {
 }
 
 $(document).ready(function () {
-  $(".btn-group-toggle.time .btn ").click(function () {
+  var selectedTime = "lastmonday";
+  var selectedAggregation = "total";
+
+  // Handling time buttons click
+  $(".btn-group-toggle.time .btn").click(function () {
     // Remove 'active' class from all buttons in the group
     $(".btn-group-toggle.time .btn").removeClass("active");
 
@@ -200,13 +397,15 @@ $(document).ready(function () {
     // Mark the corresponding radio input as checked
     $(this).find("input").prop("checked", true);
 
-    //send data to server and modify the chart
-    const selectedTime = $(this).find("input").attr("id");
-    updateChart(selectedTime);
+    // Send data to server and modify the chart
+    selectedTime = $(this).find("input").attr("id");
+
+    // Update chart with selected time and current aggregation
+    updateChart(selectedTime, selectedAggregation);
   });
 
-  // when you click an aggregation
-  $(".btn-group-toggle.aggregation .btn ").click(function () {
+  // Handling aggregation buttons click with event delegation
+  $(".btn-group-toggle.aggregation").on("click", ".btn", function () {
     // Remove 'active' class from all buttons in the group
     $(".btn-group-toggle.aggregation .btn").removeClass("active");
 
@@ -216,13 +415,20 @@ $(document).ready(function () {
     // Mark the corresponding radio input as checked
     $(this).find("input").prop("checked", true);
 
-    //send data to server and modify the chart
-    // const selectedTime = $(this).find("input").attr("id");
-    // updateChart(selectedTime);
+    // Update the selected aggregation value
+    selectedAggregation = $(this).find("input").attr("id");
+
+    // Update the chart with the selected time and aggregation
+    updateChart(selectedTime, selectedAggregation);
+
+    // Debug logs
+    console.log(selectedTime);
+    console.log("THIS HAPPENED");
+    console.log(selectedAggregation);
   });
 
-  // Initial chart load
-  updateChart("lastmonday");
+  // Initial chart load with "lastmonday" as the default value
+  updateChart("lastmonday", selectedAggregation);
 
   // Add updateStreakCount to the fetch callback
   fetch("/getrecords", {
