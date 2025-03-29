@@ -36,13 +36,15 @@ function getLastMonday() {
   const lastMonday = new Date(today);
 
   // Calculate the difference to the last Monday
-  const diff = (dayOfWeek + 6) % 7; // Adjust so that Monday is 0
+  const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Adjust so Monday is 0, Sunday is 6
   lastMonday.setDate(today.getDate() - diff);
 
   return lastMonday.toISOString().split("T")[0];
 }
 
-lastMonday = getLastMonday();
+lastMonday = new Date(getLastMonday());
+lastMonday.setDate(lastMonday.getDate() + 1);
+lastMonday = lastMonday.toISOString().split("T")[0];
 console.log("Last Monday:", getLastMonday());
 
 // Endpoint to handle form submissions
@@ -99,7 +101,7 @@ app.post("/initial", (req, res) => {
     // Get the date 7 days ago
     const today = new Date();
     const lastWeek = new Date(today);
-    lastWeek.setDate(today.getDate() - 6);
+    lastWeek.setDate(today.getDate() - 5);
     startDate = lastWeek.toISOString().split("T")[0];
   } else if (time === "last30days") {
     // Get the date 30 days ago
