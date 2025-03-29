@@ -1,4 +1,5 @@
 let myChart = null; // Store the chart instance globally
+let myLineChart = null;
 
 // Function to update the chart based on the selected time
 function updateChart(
@@ -44,7 +45,7 @@ function updateChart(
       }
 
       // Create array of word counts matching updatedDates
-      const updatedWordCountArray = updatedDates.map((date) => {
+      let updatedWordCountArray = updatedDates.map((date) => {
         if (dates.includes(date)) {
           // If date exists in original data, use the word count
           return data.data[date].reduce((sum, entry) => sum + entry.wc, 0);
@@ -201,7 +202,7 @@ function updateChart(
         roundingIncrement = 1000;
       }
 
-      const maxY = maxValue
+      let maxY = maxValue
         ? Math.ceil(maxValue / roundingIncrement) * roundingIncrement
         : 100;
 
@@ -326,9 +327,49 @@ function updateChart(
         });
       }
 
-      // Set chart container height
-      document.getElementById("myChart").style.height = "300px";
+      // Destroy existing line chart if it exists
+      if (myLineChart) {
+        myLineChart.destroy();
+      }
+
+      // Convert updatedWordCountArray to cumulative values
+      let cumulativeSum = 0;
+      updatedWordCountArray = updatedWordCountArray.map((count) => {
+        cumulativeSum += count;
+        return cumulativeSum;
+      });
+
+      // Update maxY for the chart scale based on cumulative total
+      maxY = Math.ceil(Math.max(...updatedWordCountArray) * 1.1);
+
+      // Create new line chart
+      myLineChart = new Chart("myLineChart", {
+        type: "line",
+        data: {
+          labels: updatedDates,
+          datasets: [
+            {
+              fill: false,
+              lineTension: 0.4,
+              backgroundColor: "rgba(47, 55, 64, 0.1)",
+              borderColor: "rgba(47, 55, 64, 1)",
+              pointBackgroundColor: "rgba(47, 55, 64, 1)",
+              pointBorderColor: "rgba(47, 55, 64, 1)",
+              pointRadius: 3,
+              data: updatedWordCountArray,
+            },
+          ],
+        },
+        options: {
+          legend: { display: false },
+          maintainAspectRatio: false,
+          scales: {
+            yAxes: [{ ticks: { min: 0, max: maxY } }],
+          },
+        },
+      });
     })
+
     .catch((error) => {
       console.error("Error:", error);
     });

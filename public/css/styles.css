@@ -116,3 +116,17 @@ label {
 #streakCount {
   padding-left: 10% !important;
 }
+
+/* Add chart container styling */
+.chart-container {
+  position: relative;
+  height: 400px; /* Set a fixed height */
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Ensure charts don't overflow their containers */
+canvas {
+  max-height: 400px;
+  width: 100% !important;
+}
