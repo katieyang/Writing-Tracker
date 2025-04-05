@@ -214,6 +214,21 @@
           <div class="col-12 col-md-4 mb-4">
             <div class="card w-100 h-100">
               <div class="card-body text-center">
+                <form id="goalForm" class="mb-3">
+                  <div class="form-group">
+                    <label for="dailyGoal" class="text-muted">Daily Word Count Goal</label>
+                    <div class="input-group">
+                      <input 
+                        type="number" 
+                        class="form-control"
+                        id="dailyGoal"
+                        placeholder="Enter word count"
+                        min="1"
+                      >
+                      <button type="submit" class="btn btn-primary dailyGoal">Set Goal</button>
+                    </div>
+                  </div>
+                </form>
                 <h5 class="card-title">Cumulative Word Count</h5>
                 <p class="card-text">
                   <span id="cumulativeCount" class="display-4">0</span>

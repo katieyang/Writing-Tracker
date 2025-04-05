@@ -468,6 +468,16 @@ $(document).ready(function () {
     console.log(selectedAggregation);
   });
 
+  // Handle daily goal form submission
+  $("#goalForm").on("submit", function (event) {
+    event.preventDefault();
+    const dailyGoal = $("#dailyGoal").val();
+
+    // store in cookie and update?
+    console.log(dailyGoal);
+    // updateGoal();
+  });
+
   // Initial chart load with "lastmonday" as the default value
   updateChart("lastmonday", selectedAggregation);
 
