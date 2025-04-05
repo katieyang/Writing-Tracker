@@ -127,6 +127,6 @@ label {
 
 /* Ensure charts don't overflow their containers */
 canvas {
-  max-height: 400px;
+  max-height: 200px;
   width: 100% !important;
 }
