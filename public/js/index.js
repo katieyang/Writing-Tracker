@@ -472,10 +472,12 @@ $(document).ready(function () {
   $("#goalForm").on("submit", function (event) {
     event.preventDefault();
     const dailyGoal = $("#dailyGoal").val();
+    // Store the daily goal in localStorage
+    localStorage.setItem("dailyGoal", dailyGoal);
 
-    // store in cookie and update?
-    console.log(dailyGoal);
-    // updateGoal();
+    // Fetch and log the stored daily goal
+    const storedGoal = localStorage.getItem("dailyGoal");
+    console.log("Stored daily goal:", storedGoal);
   });
 
   // Initial chart load with "lastmonday" as the default value
