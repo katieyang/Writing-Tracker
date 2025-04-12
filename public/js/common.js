@@ -1,32 +1,29 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Function to get all cookies as an object
-  function getAllCookies() {
-    const cookies = document.cookie.split("; ");
-    const cookieObject = {};
-    cookies.forEach((cookie) => {
-      const [name, value] = cookie.split("=");
-      cookieObject[name] = value;
-    });
-    return cookieObject;
-  }
-  // Function to set a cookie
-  function setCookie(name, value, days) {
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    const expires = "expires=" + date.toUTCString();
-    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+  // Function to get all localStorage items as an object
+  function getAllStorage() {
+    const storageObject = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      storageObject[key] = localStorage.getItem(key);
+    }
+    return storageObject;
   }
 
-  // Function to check if a cookie exists and set it if it doesn't
-  function checkAndSetCookie(name, value, days) {
-    const cookies = getAllCookies();
-    if (!cookies[name]) {
-      setCookie(name, value, days);
-      console.log(`Cookie ${name} set to ${value}`);
+  // Function to set a localStorage item
+  function setStorage(name, value) {
+    localStorage.setItem(name, value);
+  }
+
+  // Function to check if a localStorage item exists and set it if it isn't
+  function checkAndSetStorage(name, value) {
+    const storedValue = localStorage.getItem(name);
+    if (!storedValue) {
+      setStorage(name, value);
+      console.log(`Storage ${name} set to ${value}`);
       return value;
     } else {
-      console.log(`Cookie ${name} already exists with value ${cookies[name]}`);
-      return cookies[name];
+      console.log(`Storage ${name} already exists with value ${storedValue}`);
+      return storedValue;
     }
   }
 
@@ -42,10 +39,10 @@ document.addEventListener("DOMContentLoaded", function () {
     return result;
   }
 
-  console.log(getAllCookies());
+  console.log(getAllStorage());
   const newUserId = generateRandomUserId(16);
-  userId = checkAndSetCookie("userid", newUserId, 365 * 50);
-  console.log(getAllCookies());
+  userId = checkAndSetStorage("userid", newUserId);
+  console.log(getAllStorage());
 
   // Set the max date for the start date input to today
   const today = new Date();
@@ -64,9 +61,6 @@ document.addEventListener("DOMContentLoaded", function () {
       // Convert FormData to an object for easier handling
       const formObject = Object.fromEntries(formData.entries());
       formObject.userid = userId;
-
-      // Log or display the results
-      console.log("Form Data:", formObject);
 
       // Send the form data to the server
       fetch("/submit", {
