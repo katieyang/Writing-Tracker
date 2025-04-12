@@ -339,29 +339,66 @@ function updateChart(
         return cumulativeSum;
       });
 
-      // Update maxY for the chart scale based on cumulative total
-      maxY = Math.ceil(Math.max(...updatedWordCountArray) * 1.1);
-
       // Create new line chart
+      const dailyGoal = localStorage.getItem("dailyGoal");
+      const datasets = [
+        {
+          label: "Actual",
+          fill: false,
+          lineTension: 0.4,
+          backgroundColor: "rgba(47, 55, 64, 0.1)",
+          borderColor: "rgba(47, 55, 64, 1)",
+          pointBackgroundColor: "rgba(47, 55, 64, 1)",
+          pointBorderColor: "rgba(47, 55, 64, 1)",
+          pointRadius: 3,
+          data: updatedWordCountArray,
+        },
+      ];
+
+      // Add goal line (defaults to 0 if dailyGoal doesn't exist)
+      const goalLine = [];
+      let cumulativeGoal = 0;
+      const dailyGoalValue = dailyGoal ? parseInt(dailyGoal) : 0;
+
+      if (selectedTime === "lastyear" || selectedTime === "alltime") {
+        // For monthly view, multiply daily goal by average days in month
+        const daysInMonth = 30.44; // Average days per month
+        for (let i = 0; i < updatedDates.length; i++) {
+          cumulativeGoal += dailyGoalValue * daysInMonth;
+          goalLine.push(cumulativeGoal);
+        }
+      } else {
+        // For daily view, use regular daily goal
+        for (let i = 0; i < updatedDates.length; i++) {
+          cumulativeGoal += dailyGoalValue;
+          goalLine.push(cumulativeGoal);
+        }
+      }
+
+      datasets.push({
+        label: "Goal",
+        fill: false,
+        lineTension: 0.4,
+        backgroundColor: "rgba(255, 99, 132, 0.1)",
+        borderColor: "rgba(52, 152, 219, 1)",
+        pointBackgroundColor: "rgba(52, 152, 219, 1)",
+        pointBorderColor: "rgba(52, 152, 219, 1)",
+        pointRadius: 3,
+        data: goalLine,
+      });
+      // Update maxY for the chart scale based on the higher of actual or goal values
+      maxY = Math.ceil(
+        Math.max(Math.max(...updatedWordCountArray), Math.max(...goalLine))
+      );
+
       myLineChart = new Chart("myLineChart", {
         type: "line",
         data: {
           labels: updatedDates,
-          datasets: [
-            {
-              fill: false,
-              lineTension: 0.4,
-              backgroundColor: "rgba(47, 55, 64, 0.1)",
-              borderColor: "rgba(47, 55, 64, 1)",
-              pointBackgroundColor: "rgba(47, 55, 64, 1)",
-              pointBorderColor: "rgba(47, 55, 64, 1)",
-              pointRadius: 3,
-              data: updatedWordCountArray,
-            },
-          ],
+          datasets: datasets,
         },
         options: {
-          legend: { display: false },
+          legend: { display: true },
           maintainAspectRatio: false,
           scales: {
             yAxes: [{ ticks: { min: 0, max: maxY } }],
@@ -478,6 +515,9 @@ $(document).ready(function () {
     // Fetch and log the stored daily goal
     const storedGoal = localStorage.getItem("dailyGoal");
     console.log("Stored daily goal:", storedGoal);
+
+    // Refresh the page after storing the goal
+    location.reload();
   });
 
   // Initial chart load with "lastmonday" as the default value
