@@ -387,9 +387,10 @@ function updateChart(
         data: goalLine,
       });
       // Update maxY for the chart scale based on the higher of actual or goal values
-      maxY = Math.ceil(
-        Math.max(Math.max(...updatedWordCountArray), Math.max(...goalLine))
-      );
+      maxY =
+        Math.ceil(
+          Math.max(Math.max(...updatedWordCountArray), Math.max(...goalLine))
+        ) || 100;
 
       myLineChart = new Chart("myLineChart", {
         type: "line",

@@ -100,7 +100,7 @@
               required
             />
           </div>
-
+          
           <!-- Need to add some toggle or checkbox for if user wants to overwrite or add -->
 
           <div class="col">
@@ -214,27 +214,29 @@
           <div class="col-12 col-md-4 mb-4">
             <div class="card w-100 h-100">
               <div class="card-body text-center">
+                <h5 class="card-title">Daily Word Count Goal</h5>
                 <form id="goalForm" class="mb-3">
                   <div class="form-group">
-                    <label for="dailyGoal" class="text-muted">Daily Word Count Goal</label>
                     <div class="input-group">
                       <input 
                         type="number" 
                         class="form-control"
                         id="dailyGoal"
                         placeholder="Enter word count"
-                        min="1"
+                        min="0"
                       >
                       <button type="submit" class="btn btn-primary dailyGoal">Set Goal</button>
                     </div>
                   </div>
                 </form>
+                <hr class="my-3">
                 <h5 class="card-title">Cumulative Word Count</h5>
                 <p class="card-text">
                   <span id="cumulativeCount" class="display-4">0</span>
                   <br />
                   <span class="text-muted">words</span>
                   <hr class="my-3">
+                  <h5 class="card-title">Streak</h5>
                   <div class="streak-container">
                     <span id="streakCount" class="display-4">  0</span>
                     <span class="fire-emoji" style="font-size: 1.5em; margin-left: 2px;">🔥</span>
