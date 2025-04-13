@@ -130,3 +130,9 @@ canvas {
   max-height: 200px;
   width: 100% !important;
 }
+
+/* Align wcupdateForm button to the left */
+#addwcbutton {
+  text-align: left;
+  margin-right: auto;
+}
