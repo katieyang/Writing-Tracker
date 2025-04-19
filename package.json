@@ -1,12 +1,17 @@
 {
   "name": "writing-tracker",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "writing",
+    "tracker",
+    "progress"
+  ],
+  "author": "Katie Yang",
   "license": "ISC",
   "description": "",
   "dependencies": {
