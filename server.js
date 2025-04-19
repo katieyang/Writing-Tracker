@@ -9,10 +9,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // Start the server
 const PORT = 3000;
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "html", "index.html")); // Correct path
-});
-
 app.use(express.json());
 
 app.listen(process.env.PORT || PORT, () => {
