@@ -48,5 +48,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgements
 I found the following resources very helpful during building this process:
+
 (1) I used Cursor for the first time while building this and really liked it.
+
 (2) I used SQLite3 for the first time, and learned a lot from this tutorial: https://bytemyke.com/how-to-use-sqlite-in-node-js/
