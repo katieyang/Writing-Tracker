@@ -34,19 +34,21 @@ const db = new sqlite3.Database(dbPath, (err) => {
 // Get last Monday's date
 function getLastMonday() {
   const today = new Date();
-  const dayOfWeek = today.getDay(); // 0 (Sunday) to 6 (Saturday)
+  const dayOfWeek = today.getDay(); // 0 (Sun) to 6 (Sat)
+  const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   const lastMonday = new Date(today);
-
-  // Calculate the difference to the last Monday
-  const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Adjust so Monday is 0, Sunday is 6
   lastMonday.setDate(today.getDate() - diff);
 
-  return lastMonday.toISOString().split("T")[0];
+  // Format as YYYY-MM-DD in local time
+  const year = lastMonday.getFullYear();
+  const month = String(lastMonday.getMonth() + 1).padStart(2, "0");
+  const day = String(lastMonday.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
-lastMonday = new Date(getLastMonday());
+const lastMonday = new Date(getLastMonday());
 lastMonday.setDate(lastMonday.getDate() + 1);
-lastMonday = lastMonday.toISOString().split("T")[0];
 console.log("Last Monday:", getLastMonday());
 
 // Endpoint to handle form submissions
