@@ -54,7 +54,7 @@ function getLastWeek() {
   today.setHours(0, 0, 0, 0);
 
   // Subtract 6 days to get the correct previous date
-  today.setDate(today.getDate() - 5);
+  today.setDate(today.getDate() - 6);
 
   // Format as YYYY-MM-DD in local time
   const year = today.getFullYear();
