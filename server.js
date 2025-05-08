@@ -35,7 +35,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
 function getLastMonday() {
   const today = new Date();
   const dayOfWeek = today.getDay(); // 0 (Sun) to 6 (Sat)
-  const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  const diff = dayOfWeek === 0 ? 6 : dayOfWeek;
   const lastMonday = new Date(today);
   lastMonday.setDate(today.getDate() - diff);
 
@@ -43,6 +43,23 @@ function getLastMonday() {
   const year = lastMonday.getFullYear();
   const month = String(lastMonday.getMonth() + 1).padStart(2, "0");
   const day = String(lastMonday.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+// Get last week's date
+function getLastWeek() {
+  const today = new Date();
+  // Set time to start of the day to avoid time zone issues
+  today.setHours(0, 0, 0, 0);
+
+  // Subtract 6 days to get the correct previous date
+  today.setDate(today.getDate() - 5);
+
+  // Format as YYYY-MM-DD in local time
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 }
@@ -102,11 +119,8 @@ app.post("/initial", (req, res) => {
   if (time === "lastmonday") {
     startDate = lastMonday;
   } else if (time === "lastwk") {
-    // Get the date 7 days ago
-    const today = new Date();
-    const lastWeek = new Date(today);
-    lastWeek.setDate(today.getDate() - 5);
-    startDate = lastWeek.toISOString().split("T")[0];
+    startDate = getLastWeek();
+    console.log(startDate);
   } else if (time === "last30days") {
     // Get the date 30 days ago
     const today = new Date();
@@ -142,7 +156,8 @@ app.post("/initial", (req, res) => {
         projectName: row.projectName,
       });
     });
-
+    console.log("DATA BY DATE");
+    console.log(dataByDate);
     // Only update startDate to first data date if viewing all time
     if (time === "alltime") {
       const dates = Object.keys(dataByDate).sort();

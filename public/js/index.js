@@ -29,17 +29,21 @@ function updateChart(
       // Create array of dates from startDate to today
       const updatedDates = [];
       let startDate = new Date(data.startDate);
-      startDate.setHours(0, 0, 0, 0); // Aligns to local midnight
+      // startDate.setHours(0, 0, 0, 0); // Aligns to local midnight
       const today = new Date();
-      today.setHours(0, 0, 0, 0); // Aligns today to local midnight
+      // today.setHours(0, 0, 0, 0); // Aligns today to local midnight
 
       while (startDate <= today) {
+        // Format date in local timezone using toLocaleDateString
+        const localDate = new Date(
+          startDate.getTime() + startDate.getTimezoneOffset() * 60000
+        );
         updatedDates.push(
-          startDate.getFullYear() +
+          localDate.getFullYear() +
             "-" +
-            String(startDate.getMonth() + 1).padStart(2, "0") +
+            String(localDate.getMonth() + 1).padStart(2, "0") +
             "-" +
-            String(startDate.getDate()).padStart(2, "0")
+            String(localDate.getDate()).padStart(2, "0")
         );
         startDate.setDate(startDate.getDate() + 1);
       }
