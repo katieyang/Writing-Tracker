@@ -1,43 +1,81 @@
 let myChart = null; // Store the chart instance globally
 let myLineChart = null;
 
+function getStartDateForPeriod(selectedTime) {
+  // this is in local time zone
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let startDate;
+  if (selectedTime === "lastmonday") {
+    // Get last Monday
+    const dayOfWeek = today.getDay();
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek;
+    const lastMonday = new Date(today);
+    lastMonday.setDate(today.getDate() - diff);
+    startDate = lastMonday;
+  } else if (selectedTime === "lastwk") {
+    startDate = new Date(today);
+    startDate.setDate(today.getDate() - 6);
+  } else if (selectedTime === "last30days") {
+    startDate = new Date(today);
+    startDate.setDate(today.getDate() - 30);
+  } else if (selectedTime === "lastyear") {
+    startDate = new Date(today);
+    startDate.setMonth(today.getMonth() - 11);
+  } else if (selectedTime === "alltime") {
+    startDate = new Date("2000-01-01");
+  } else {
+    startDate = new Date("2000-01-01");
+  }
+  return startDate;
+}
+
 // Function to update the chart based on the selected time
 function updateChart(
+  // default values
   selectedTime = "lastmonday",
   selectedAggregation = "category"
 ) {
-  fetch("/initial", {
+  fetch("/getrecords", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userid: userId, time: selectedTime }),
+    body: JSON.stringify({ userid: userId }),
   })
     .then((response) => response.json())
-    .then((data) => {
+    .then((allData) => {
+      // allData is { [date]: [entries] }
+      // Filter dates based on selectedTime
+      const startDate = getStartDateForPeriod(selectedTime);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      // Get all dates in the data
+      const allDates = Object.keys(allData).sort();
+      // Filter dates within the range
+      const filteredDates = allDates.filter((dateStr) => {
+        const [year, month, day] = dateStr.split("-").map(Number);
+        const dateObj = new Date(year, month - 1, day);
+        return dateObj >= startDate && dateObj <= today;
+      });
+      // Build filtered data object
+      const data = {};
+      filteredDates.forEach((date) => {
+        data[date] = allData[date];
+      });
+      // Now, proceed as before, but with filtered data
       // For creating the graph
-      console.log(data.data);
-      const dates = Object.keys(data.data); // an array of dates
+      const dates = Object.keys(data); // an array of dates
       const wordCountArray = dates.map((date) => {
-        const totalwc = data.data[date].reduce(
-          (sum, entry) => sum + entry.wc,
-          0
-        );
+        const totalwc = data[date].reduce((sum, entry) => sum + entry.wc, 0);
         return totalwc;
-      }); // an array of word counts
+      });
 
       // Create array of dates from startDate to today
       const updatedDates = [];
-      let startDate = new Date(data.startDate);
-      // startDate.setHours(0, 0, 0, 0); // Aligns to local midnight
-      const today = new Date();
-      // today.setHours(0, 0, 0, 0); // Aligns today to local midnight
-
-      while (startDate <= today) {
-        // Format date in local timezone using toLocaleDateString
-        const localDate = new Date(
-          startDate.getTime() + startDate.getTimezoneOffset() * 60000
-        );
+      let iterDate = new Date(startDate);
+      while (iterDate <= today) {
+        const localDate = new Date(iterDate.getTime() + iterDate.getTimezoneOffset() * 60000);
         updatedDates.push(
           localDate.getFullYear() +
             "-" +
@@ -45,14 +83,14 @@ function updateChart(
             "-" +
             String(localDate.getDate()).padStart(2, "0")
         );
-        startDate.setDate(startDate.getDate() + 1);
+        iterDate.setDate(iterDate.getDate() + 1);
       }
 
       // Create array of word counts matching updatedDates
       let updatedWordCountArray = updatedDates.map((date) => {
         if (dates.includes(date)) {
           // If date exists in original data, use the word count
-          return data.data[date].reduce((sum, entry) => sum + entry.wc, 0);
+          return data[date].reduce((sum, entry) => sum + entry.wc, 0);
         } else {
           // For dates not in original data, use 0
           return 0;
@@ -64,7 +102,7 @@ function updateChart(
       //fetch all the unique categories
       const categories = new Set();
       dates.forEach((date) => {
-        data.data[date].forEach((entry) => {
+        data[date].forEach((entry) => {
           categories.add(entry.category);
         });
       });
@@ -73,7 +111,7 @@ function updateChart(
         categoryArray[category] = updatedDates.map((date) => {
           if (dates.includes(date)) {
             // If date exists in original data, use the word count
-            return data.data[date]
+            return data[date]
               .filter((entry) => entry.category === category)
               .reduce((sum, entry) => sum + entry.wc, 0);
           } else {
@@ -88,7 +126,7 @@ function updateChart(
       //fetch all the unique projects
       const projects = new Set();
       dates.forEach((date) => {
-        data.data[date].forEach((entry) => {
+        data[date].forEach((entry) => {
           projects.add(entry.projectName);
         });
       });
@@ -97,7 +135,7 @@ function updateChart(
         projectArray[project] = updatedDates.map((date) => {
           if (dates.includes(date)) {
             // If date exists in original data, use the word count
-            return data.data[date]
+            return data[date]
               .filter((entry) => entry.projectName === project)
               .reduce((sum, entry) => sum + entry.wc, 0);
           } else {
@@ -411,7 +449,6 @@ function updateChart(
         },
       });
     })
-
     .catch((error) => {
       console.error("Error:", error);
     });

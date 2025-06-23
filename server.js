@@ -66,13 +66,13 @@ function getLastWeek() {
 
 const lastMonday = new Date(getLastMonday());
 lastMonday.setDate(lastMonday.getDate() + 1);
-console.log("Last Monday:", getLastMonday());
+// console.log("Last Monday:", getLastMonday());
 
 // Endpoint to handle form submissions
 app.post("/submit", (req, res) => {
   const formData = req.body;
-  console.log("hello");
-  console.log("Received form data:", formData);
+  // console.log("hello");
+  // console.log("Received form data:", formData);
 
   //   Insert the form data into the database
   const insertSql = `
@@ -120,7 +120,7 @@ app.post("/initial", (req, res) => {
     startDate = lastMonday;
   } else if (time === "lastwk") {
     startDate = getLastWeek();
-    console.log(startDate);
+    // console.log(startDate);
   } else if (time === "last30days") {
     // Get the date 30 days ago
     const today = new Date();
@@ -136,8 +136,6 @@ app.post("/initial", (req, res) => {
   } else if (time === "alltime") {
     startDate = "2000-01-01";
   }
-
-  console.log("Start Date:", startDate);
 
   //fetch and display contents of sql database, get it in a form that it can be fed back
   let dataByDate = {};
