@@ -9,7 +9,7 @@ function getStartDateForPeriod(selectedTime) {
   if (selectedTime === "lastmonday") {
     // Get last Monday
     const dayOfWeek = today.getDay();
-    const diff = dayOfWeek === 0 ? 6 : dayOfWeek;
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     const lastMonday = new Date(today);
     lastMonday.setDate(today.getDate() - diff);
     startDate = lastMonday;
