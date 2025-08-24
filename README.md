@@ -1,7 +1,5 @@
 # Writing Tracker
 
-Hosted here, click to visit web app: [![Glitch](https://img.shields.io/badge/glitch-%233333FF.svg?style=for-the-badge&logo=glitch&logoColor=white)](https://galvanized-dot-kitty.glitch.me/index.html)
-
 A simple web application to help writers track their progress, set goals, and visualize their writing activity.
 
 ## Features
@@ -25,7 +23,7 @@ A simple web application to help writers track their progress, set goals, and vi
 
 ## Getting Started
 
-For usage of the web app, would recommend the link above, but if you want a local version, see instructions below:
+For local usage:
 
 1. **Clone the repository:** `git clone https://github.com/your-username/writing-tracker.git`
 2. **Install dependencies:** `npm install`
