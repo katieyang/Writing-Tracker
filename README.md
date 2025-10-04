@@ -25,7 +25,7 @@ A simple web application to help writers track their progress, set goals, and vi
 
 For local usage:
 
-1. **Clone the repository:** `git clone https://github.com/your-username/writing-tracker.git`
+1. **Clone the repository:** `git clone https://github.com/katieyang/writing-tracker.git`
 2. **Install dependencies:** `npm install`
 3. **Start the server:** `npm start`
 4. **Access the app:** Open your browser and go to `http://localhost:3000`.
